@@ -44,4 +44,5 @@ void display_temperature()
 int main()
 {
 	display_temperature();
+	return 0;
 }

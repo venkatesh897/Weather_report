@@ -14,7 +14,7 @@ char* get_temperature_of_city(char* file_name)
  	while(weather_report_token !=  NULL)
  	{
  		char is_temperature_found = 'n';
- 		if(strcmp(weather_report_token, "temp"))
+ 		if(strcmp(weather_report_token, "temp") == 0)
  		{
  			is_temperature_found = 'y';
  		}
@@ -36,6 +36,7 @@ void display_temperature()
 	printf("Enter city: ");
 	scanf("%s", city_name);
 	sprintf(cmd, "curl \"http://api.openweathermap.org/data/2.5/weather?q=%s&appid=f9ba15284b25d77cf2aae3a2733bb72a&units=metric\" > %s", city_name, WEATHER_REPORT_FILE);
+	system(cmd);
 	char* temperature = get_temperature_of_city(WEATHER_REPORT_FILE);
 	printf("Temperature in %s is %s", city_name, temperature);
 }

@@ -38,7 +38,7 @@ void display_temperature()
 	sprintf(cmd, "curl \"http://api.openweathermap.org/data/2.5/weather?q=%s&appid=f9ba15284b25d77cf2aae3a2733bb72a&units=metric\" > %s", city_name, WEATHER_REPORT_FILE);
 	system(cmd);
 	char* temperature = get_temperature_of_city(WEATHER_REPORT_FILE);
-	printf("Temperature in %s is %s", city_name, temperature);
+	printf("Temperature in %s is %s %cC", city_name, temperature, 248);
 }
 
 int main()
@@ -46,3 +46,8 @@ int main()
 	display_temperature();
 	return 0;
 }
+
+
+
+
+

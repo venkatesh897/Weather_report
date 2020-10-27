@@ -1,48 +1,56 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#define WEATHER_REPORT_FILENAME "weatherReport.dat"
+#define FILE_NAME_OF_WEATHER_REPORT "WeatherReport.dat"
 
-char* get_temperature()
+void displayTemperature();
+void loadWeatherReport(char location, char fileName);
+char getTemperatureFromWeatherReport(char fileName);
+
+int main()
 {
-	FILE* fp_weather_report = fopen(WEATHER_REPORT_FILENAME, "r");
-	char* temperature;
-	char weather_report[1000];
-	fread(weather_report, sizeof(weather_report), 1, fp_weather_report);
-	char* token = strtok(weather_report, "{,\":");
-	while(token != NULL)
+	displayTemperature();
+	return 0;
+}
+
+void loadWeatherReport(char location, char fileName)
+{
+	char command[500];
+	sprintf(cmd, "curl \"http://api.openweathermap.org/data/2.5/weather?q=%s&appid=f9ba15284b25d77cf2aae3a2733bb72a&units=metric\" > %s", location, fileName);
+	system(command);
+}
+
+char getTemperatureFromWeatherReport(char fileName)
+{
+	FILE* fpWeatherReport = fopen(fileName, "r");
+	char* temperatureInWeatherReport;
+	char weatherReport[1000];
+	fread(weatherReport, sizeof(weatherReport), 1, fpWeatherReport);
+	char* ptrParsedString = strtok(weatherReport, "{,\":");
+	while(ptrParsedString != NULL)
 	{
-		char is_temperature_found = 'n';
-		if(strcmp(token, "temp") == 0)
+		char isTemperatureFound = 'n';
+		if(strcmp(ptrParsedString, "temp") == 0)
 		{
-			is_temperature_found = 'y';
-			temperature = token;
+			isTemperatureFound = 'y';
+		}
+		ptrParsedString = strtok(NULL, "{,\":");
+		if(isTemperatureFound == 'y')
+		{
+			temperatureInWeatherReport = ptrParsedString;
 			break;
 		}
 	}
-	fclose(fp_weather_report);
-	return temperature;
+	fclose(fpWeatherReport);
+	return temperatureInWeatherReport;
 }
 
-void load_weather_report(char* location, char* file_name)
+void displayTemperature()
 {
-	char cmd[100];
-	sprintf(cmd, "curl \"http://api.openweathermap.org/data/2.5/weather?q=London&appid=f9874839570cbe4c58c6266950c788f6\" > %s", location, file_name);
-	system(cmd);
-}
-
-void display_temperature_of_location()
-{
-	char city[30];
-	printf("Enter city: ");
-	scanf("%s", city);
-	load_weather_report(city, WEATHER_REPORT_FILENAME);
-	char* temperature = get_temperature(WEATHER_REPORT_FILENAME);
-	printf("The temperature in %s is %s", city,temperature);;
-}
-
-int main(int argc, char const *argv[])
-{
-	display_temperature_of_location();
-	return 0;
+	char cityName[30];
+	printf("Enter city name to find temperature: ");
+	scanf("%s", cityName);
+	loadWeatherReport(cityName, FILE_NAME_OF_WEATHER_REPORT);
+	char* temperature = getTemperatureFromWeatherReport(FILE_NAME_OF_WEATHER_REPORT);
+	printf("The temperature of %s is %s.", cityName, temperature);
 }
